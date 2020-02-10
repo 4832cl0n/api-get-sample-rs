@@ -1,5 +1,6 @@
 extern crate reqwest;
 extern crate tokio;
+extern crate serde_json;
 use reqwest::{Client, Url};
 
 const DEV_URI: &str = "https://bitflyer.com";
@@ -13,9 +14,9 @@ async fn main() -> Result<(), reqwest::Error> {
     let result = client.get(Url::parse(format!("{}{}", DEV_URI, PRICE).as_str()).unwrap())
         .send()
         .await?
-        .text()
+        .json::<Model::Price>()
         .await?;
-    println!("result = {}", result);
+    println!("result = {:#?}", result);
     Ok(())
 }
 
@@ -27,9 +28,9 @@ pub mod Model {
 
     #[derive(Deserialize, Serialize, Debug)]
     pub struct Price {
-        ask: i64,
-        bid: i64,
-        mid: i64,
+        ask: f64,
+        bid: f64,
+        mid: f64,
     }
 }
 
